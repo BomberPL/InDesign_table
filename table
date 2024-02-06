@@ -1,0 +1,41 @@
+// find table in document
+var table = doc.stories[0].tables[0]; // zakładam, że tabela jest w pierwszej historii dokumentu
+
+// Get access to cell
+var cells = table.cells;
+
+// Get access to folder PREVIEW
+var folder = Folder("/Users/studio04/Desktop/Katalog/PREVIEW");
+
+// Read files name in folder
+var files = folder.getFiles();
+
+// Sort filenames alphabetically
+files.sort();
+
+// Wstaw nazwy plików do lewych komórek tabeli
+for (var i = 0; i < files.length; i++) {
+  // Check if there is a free cell in the table
+  if (i < cells.length) {
+    // Insert the file name into the cell
+    cells[i].contents = files[i].name;
+  } else {
+    // Add a new row to the table and insert the file name into the cell
+    var row = table.rows.add();
+    row.cells[0].contents = files[i].name;
+  }
+}
+
+// Insert graphical previews into the right cells of the table
+for (var i = 0; i < files.length; i++) {
+  // Create a graphical preview of the file
+  var preview = app.createJPEG(files[i], 72, 100); // file, resolution, quality
+  // Insert a graphical preview into the cell
+  var image = cells[i].rectangles.add();
+  image.place(preview);
+  image.fit(FitOptions.FRAME_TO_CONTENT); // match the frame to the content
+}
+
+// save & close
+doc.save();
+//doc.close();
